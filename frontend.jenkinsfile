@@ -1,0 +1,87 @@
+pipeline {
+    agent any
+
+    environment {
+        REPO_URL = "git@github.com:donchidonald/devops_frontend.git"
+        DOCKER_IMAGE = "devops_frontend:latest"
+        CONTAINER_NAME = "devops_frontend"
+        PORT_MAPPING = "8081:80"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                script {
+                    def repoDir = env.WORKSPACE
+
+                    dir(repoDir) {
+                        if (fileExists('.git')) {
+                            echo "🔄 Le dépôt existe déjà, mise à jour avec git pull"
+                            sh 'git reset --hard'
+                            sh 'git clean -fd'
+                            sh 'git pull origin $(git rev-parse --abbrev-ref HEAD)'
+                        } else {
+                            echo "📦 Le dépôt n'existe pas, clonage du projet"
+                            sh "git clone ${env.REPO_URL} ."
+                        }
+
+                        sh 'git submodule update --init --recursive'
+                    }
+                }
+            }
+        }
+
+        stage('Build New Docker Image') {
+            steps {
+                script {
+                    echo "🚀 Construction de la nouvelle image Docker..."
+                    sh "docker build -t ${env.DOCKER_IMAGE} ."
+                }
+            }
+        }
+
+        stage('Stop and Remove Existing Container') {
+            steps {
+                script {
+                    echo "🛑 Arrêt et suppression du container existant..."
+                    sh """
+                        docker container stop ${env.CONTAINER_NAME} || echo "⚠️ Container peut-être déjà arrêté."
+                        docker container rm -f ${env.CONTAINER_NAME} || echo "⚠️ Container peut-être déjà supprimé."
+                    """
+                }
+            }
+        }
+
+        stage('Run New Docker Container') {
+            steps {
+                script {
+                    echo "🏃 Déploiement du nouveau container..."
+                    sh """
+                        docker run --restart always --name ${env.CONTAINER_NAME} -d -p ${env.PORT_MAPPING} ${env.DOCKER_IMAGE}
+                    """
+                }
+            }
+        }
+
+        stage('Verify Container Logs') {
+            steps {
+                script {
+                    echo "⏳ Attente de 5 secondes avant de vérifier les logs du container..."
+                    sleep 5
+                    echo "📜 Vérification des logs du container..."
+                    def logOutput = sh(script: "docker logs ${env.CONTAINER_NAME} | tail -n 50", returnStdout: true).trim()
+                    echo logOutput
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Déploiement réussi !"
+        }
+        failure {
+            echo "❌ Échec du pipeline. Vérifiez les logs pour plus d'informations."
+        }
+    }
+}

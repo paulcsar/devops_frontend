@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formation DevOps - Geek Institut</title>
+    <style>
+        :root {
+            --bg-dark: #140022;
+            --bg-deep: #23003d;
+            --violet: #6d1dff;
+            --violet-soft: #8d3dff;
+            --pink: #ff00b8;
+            --pink-soft: #ff4bd1;
+            --blue: #43c7ff;
+            --cyan: #7ce7ff;
+            --yellow: #ffd54a;
+            --white: #ffffff;
+            --text-soft: rgba(255, 255, 255, 0.82);
+            --border: rgba(255, 255, 255, 0.18);
+            --glass: rgba(255, 255, 255, 0.08);
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+            --radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: var(--white);
+            background:
+                    radial-gradient(circle at 15% 20%, rgba(67, 199, 255, 0.20), transparent 18%),
+                    radial-gradient(circle at 85% 18%, rgba(255, 0, 184, 0.28), transparent 22%),
+                    radial-gradient(circle at 50% 55%, rgba(255, 75, 209, 0.16), transparent 26%),
+                    radial-gradient(circle at 88% 82%, rgba(109, 29, 255, 0.28), transparent 18%),
+                    linear-gradient(135deg, #120019 0%, #2a0047 45%, #59006d 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::before {
+            background:
+                    linear-gradient(120deg, transparent 0 48%, rgba(255, 0, 184, 0.22) 49%, transparent 50%),
+                    linear-gradient(150deg, transparent 0 62%, rgba(124, 231, 255, 0.12) 63%, transparent 64%),
+                    linear-gradient(100deg, transparent 0 36%, rgba(255, 255, 255, 0.05) 37%, transparent 38%);
+            opacity: 0.65;
+        }
+
+        .page {
+            position: relative;
+            z-index: 1;
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 28px 0 60px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .brand-card,
+        .hero-card,
+        .section,
+        .task-card,
+        .notice-card,
+        .footer-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+            border: 1px solid var(--border);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .brand-card {
+            padding: 26px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            min-height: 138px;
+        }
+
+        .brand-logo {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--violet));
+            display: grid;
+            place-items: center;
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
+            box-shadow: 0 0 30px rgba(67, 199, 255, 0.35);
+            flex-shrink: 0;
+        }
+
+        .brand-card h1 {
+            font-size: clamp(1.8rem, 3vw, 2.6rem);
+            letter-spacing: 0.5px;
+            line-height: 1.05;
+        }
+
+        .brand-card h1 span {
+            color: var(--cyan);
+        }
+
+        .brand-card p {
+            margin-top: 8px;
+            color: var(--text-soft);
+            font-size: 1rem;
+        }
+
+        .hero-card {
+            padding: 34px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            right: -80px;
+            top: -80px;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 0, 184, 0.38), transparent 65%);
+        }
+
+        .eyebrow {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, rgba(109, 29, 255, 0.55), rgba(255, 0, 184, 0.45));
+            border: 1px solid rgba(255,255,255,0.18);
+            margin-bottom: 18px;
+        }
+
+        .hero-title {
+            font-size: clamp(2.2rem, 5vw, 4.2rem);
+            line-height: 0.95;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            letter-spacing: 1px;
+            font-weight: 900;
+        }
+
+        .hero-title .accent {
+            color: var(--pink-soft);
+            text-shadow: 0 0 18px rgba(255, 75, 209, 0.35);
+        }
+
+        .hero-text {
+            font-size: 1.08rem;
+            line-height: 1.8;
+            color: var(--text-soft);
+            max-width: 760px;
+        }
+
+        .participant-box {
+            margin-top: 24px;
+            padding: 18px 20px;
+            border-radius: 18px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+            border: 1px solid rgba(255,255,255,0.14);
+        }
+
+        .participant-label {
+            font-size: 0.9rem;
+            color: var(--cyan);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 700;
+        }
+
+        .participant-name {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 900;
+            color: var(--yellow);
+            text-shadow: 0 0 18px rgba(255, 213, 74, 0.2);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .section {
+            padding: 28px;
+        }
+
+        .section h2 {
+            font-size: 1.45rem;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .section p,
+        .section li,
+        .task-card li,
+        .notice-card li {
+            color: var(--text-soft);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .section strong,
+        .task-card strong,
+        .notice-card strong {
+            color: var(--yellow);
+        }
+
+        .left-7 { grid-column: span 7; }
+        .right-5 { grid-column: span 5; }
+        .full { grid-column: 1 / -1; }
+        .half { grid-column: span 6; }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 18px;
+        }
+
+        .mini-card {
+            padding: 18px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .mini-card h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: var(--cyan);
+            text-transform: uppercase;
+        }
+
+        .mini-card p {
+            font-size: 0.96rem;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            padding: 8px 14px;
+            border-radius: 999px;
+            margin: 6px 8px 0 0;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.12);
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .highlight {
+            position: relative;
+            overflow: hidden;
+            background:
+                    radial-gradient(circle at 90% 20%, rgba(255, 75, 209, 0.22), transparent 28%),
+                    linear-gradient(135deg, rgba(109,29,255,0.25), rgba(255,0,184,0.12));
+            border: 1px solid rgba(255,255,255,0.18);
+        }
+
+        .highlight::before {
+            content: "JENKINS";
+            position: absolute;
+            right: 18px;
+            bottom: 10px;
+            font-size: clamp(2rem, 5vw, 4.4rem);
+            font-weight: 900;
+            color: rgba(255,255,255,0.06);
+            letter-spacing: 2px;
+            pointer-events: none;
+        }
+
+        .jenkins-title {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            line-height: 1;
+            text-transform: uppercase;
+            font-weight: 900;
+            margin-bottom: 12px;
+        }
+
+        .jenkins-title span {
+            color: var(--pink-soft);
+        }
+
+        ul.clean {
+            list-style: none;
+            margin-top: 12px;
+        }
+
+        ul.clean li {
+            margin-bottom: 8px;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        ul.clean li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--yellow);
+            font-weight: 900;
+        }
+
+        .task-card,
+        .notice-card,
+        .footer-card {
+            padding: 28px;
+        }
+
+        .task-card h2,
+        .notice-card h2,
+        .footer-card h2 {
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.35rem;
+        }
+
+        .callout {
+            margin-top: 16px;
+            padding: 16px 18px;
+            border-left: 4px solid var(--pink-soft);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.06);
+            color: #fff;
+            line-height: 1.7;
+        }
+
+        .github-box {
+            margin-top: 16px;
+            padding: 18px 20px;
+            border-radius: 18px;
+            background: linear-gradient(90deg, rgba(67,199,255,0.12), rgba(255,0,184,0.10));
+            border: 1px solid rgba(124, 231, 255, 0.25);
+        }
+
+        .github-user {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--cyan);
+            letter-spacing: 1px;
+            word-break: break-word;
+        }
+
+        .footer-card {
+            text-align: center;
+            background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+        }
+
+        .footer-card p {
+            color: var(--text-soft);
+            line-height: 1.8;
+            max-width: 860px;
+            margin: 0 auto;
+        }
+
+        .signature {
+            margin-top: 18px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--yellow);
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 960px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .left-7,
+            .right-5,
+            .half,
+            .full {
+                grid-column: 1 / -1;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page {
+                width: min(100% - 18px, 100%);
+                padding-top: 12px;
+                padding-bottom: 28px;
+            }
+
+            .brand-card,
+            .hero-card,
+            .section,
+            .task-card,
+            .notice-card,
+            .footer-card {
+                padding: 20px;
+                border-radius: 20px;
+            }
+
+            .brand-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <section class="hero">
+        <div class="brand-card">
+            <div class="brand-logo">Gi</div>
+            <div>
+                <h1>Geek <span>Institut</span></h1>
+                <p>Formation pratique, professionnelle et orientée déploiement réel.</p>
+            </div>
+        </div>
+
+        <div class="hero-card">
+            <span class="eyebrow">Programme DevOps</span>
+            <h2 class="hero-title">Formation <span class="accent">DevOps</span> & Déploiement Professionnel</h2>
+            <p class="hero-text">
+                Cette page présente une mise en situation concrète autour de la formation DevOps de <strong>Geek Institut</strong>.
+                L'objectif est de comprendre la logique de versioning, d'automatisation, de collaboration GitHub et de
+                déploiement propre en environnement serveur avec <strong>Jenkins</strong>.
+            </p>
+
+            <div class="participant-box">
+                <span class="participant-label">Nom du participant</span>
+                <div class="participant-name">[Remplace ici par ton prénom]</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="grid">
+        <article class="section left-7">
+            <h2>À propos de la formation</h2>
+            <p>
+                La formation <strong>DevOps</strong> de Geek Institut permet d'apprendre à administrer un serveur Linux,
+                structurer un projet web, utiliser Git et GitHub, travailler avec Docker, mettre en place un pipeline CI/CD
+                et déployer des applications de manière professionnelle.
+            </p>
+
+            <div class="cards">
+                <div class="mini-card">
+                    <h3>Compétences visées</h3>
+                    <p>Linux, SSH, Git, GitHub, Docker, CI/CD, Jenkins, sécurité de base et déploiement d'applications.</p>
+                </div>
+                <div class="mini-card">
+                    <h3>Objectif final</h3>
+                    <p>Être capable de publier un projet sur GitHub et le déployer proprement sur un serveur.</p>
+                </div>
+                <div class="mini-card">
+                    <h3>Méthode</h3>
+                    <p>Approche progressive, cas pratique réel, bonnes pratiques professionnelles et logique d'équipe.</p>
+                </div>
+                <div class="mini-card">
+                    <h3>Esprit attendu</h3>
+                    <p>Autonomie, rigueur, sécurité, clarté du code et respect des workflows de déploiement.</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="section right-5 highlight">
+            <h2 class="jenkins-title">Je teste le <span>déploiement</span> avec Jenkins</h2>
+            <p>
+                Dans cet exercice, le but n'est pas seulement de faire une belle page, mais de démontrer que le projet peut
+                être <strong>cloné</strong>, <strong>versionné</strong> et <strong>déployé automatiquement</strong> dans un contexte réel.
+            </p>
+            <ul class="clean">
+                <li>Créer ou cloner le projet sur sa machine</li>
+                <li>Modifier le nom du participant dans <strong>index.html</strong></li>
+                <li>Pousser le code sur GitHub</li>
+                <li>Inviter l'utilisateur GitHub <strong>donchidonald</strong></li>
+                <li>Lancer un déploiement propre via Jenkins</li>
+            </ul>
+            <div style="margin-top:16px;">
+                <span class="tag">GitHub</span>
+                <span class="tag">Jenkins</span>
+                <span class="tag">CI/CD</span>
+                <span class="tag">SSH</span>
+                <span class="tag">Geek Institut</span>
+            </div>
+        </article>
+
+        <article class="task-card half">
+            <h2>Consignes du devoir</h2>
+            <ul class="clean">
+                <li><strong>Changer le nom</strong> du participant dans cette page.</li>
+                <li><strong>Cloner</strong> le projet sur votre machine locale.</li>
+                <li><strong>Publier</strong> le projet dans votre dépôt GitHub.</li>
+                <li><strong>M'inviter</strong> dans le projet GitHub avec l'identifiant <strong>donchidonald</strong>.</li>
+                <li>Faire en sorte que le projet soit prêt pour un <strong>déploiement automatique</strong>.</li>
+            </ul>
+
+            <div class="github-box">
+                <div style="font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; color:var(--yellow); margin-bottom:8px;">Utilisateur GitHub à inviter</div>
+                <div class="github-user">donchidonald</div>
+            </div>
+        </article>
+
+        <article class="notice-card half">
+            <h2>Important - sécurité & accès serveur</h2>
+            <ul class="clean">
+                <li>Ne mettez <strong>pas votre clé personnelle</strong> dans le serveur.</li>
+                <li>La seule clé autorisée pour ce flux est la <strong>clé SSH Jenkins</strong> reliée à mon utilisateur.</li>
+                <li>En m'invitant dans votre projet GitHub, je pourrai déclencher et superviser le <strong>déploiement sans souci avec vous</strong>.</li>
+                <li>Cette méthode permet de garder une approche <strong>propre, sécurisée et professionnelle</strong>.</li>
+            </ul>
+
+            <div class="callout">
+                Le déploiement doit passer par un workflow clair : code versionné sur GitHub, accès contrôlé, et exécution du déploiement via Jenkins.
+                C'est exactement la logique DevOps attendue dans un environnement professionnel.
+            </div>
+        </article>
+
+        <article class="section full">
+            <h2>Pourquoi Geek Institut met cela en avant</h2>
+            <p>
+                Chez <strong>Geek Institut</strong>, l'objectif n'est pas seulement d'apprendre des outils, mais de développer une vraie logique de travail.
+                Savoir déployer correctement, protéger les accès, collaborer via GitHub et automatiser avec Jenkins fait partie des compétences qui donnent
+                une vraie valeur professionnelle à un développeur ou à un profil DevOps junior.
+            </p>
+            <div class="cards">
+                <div class="mini-card">
+                    <h3>Professionnalisme</h3>
+                    <p>Un projet bien présenté, bien versionné et bien déployé inspire confiance immédiatement.</p>
+                </div>
+                <div class="mini-card">
+                    <h3>Sécurité</h3>
+                    <p>On évite les mauvaises pratiques comme exposer des clés personnelles sur un serveur.</p>
+                </div>
+                <div class="mini-card">
+                    <h3>Collaboration</h3>
+                    <p>GitHub devient un vrai espace de travail partagé et non un simple dépôt de fichiers.</p>
+                </div>
+                <div class="mini-card">
+                    <h3>Automatisation</h3>
+                    <p>Jenkins permet de gagner du temps et de fiabiliser les mises en production.</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="footer-card full">
+            <h2>Projet de démonstration</h2>
+            <p>
+                Cette page <strong>index.html</strong> sert de base de travail pour l'exercice. Chaque participant doit personnaliser son nom,
+                publier le projet, respecter les consignes de sécurité et préparer le terrain pour un déploiement propre avec Jenkins.
+                Le rendu doit rester simple à maintenir, lisible, beau, et aligné avec l'identité visuelle de <strong>Geek Institut</strong>.
+            </p>
+            <div class="signature">Geek Institut • Formation DevOps • Déploiement professionnel</div>
+        </article>
+    </section>
+</main>
+</body>
+</html>
